@@ -48,6 +48,26 @@
       # Packages
       packages = forAllSystems (system: (import ./pkgs { pkgs = mkPkgs system; }).packages);
 
+      linuxPackages_6_6 = forAllSystems (
+        system:
+        let
+          pkgs = mkPkgs system;
+        in
+        (import ./pkgs { inherit pkgs; }).mkKernelModules {
+          inherit (pkgs.linuxPackages_6_6) kernel kernelModuleMakeFlags;
+        }
+      );
+      
+      linuxPackages_6_12 = forAllSystems (
+        system:
+        let
+          pkgs = mkPkgs system;
+        in
+        (import ./pkgs { inherit pkgs; }).mkKernelModules {
+          inherit (pkgs.linuxPackages_6_12) kernel kernelModuleMakeFlags;
+        }
+      );
+
       # Text formatters
       formatter = forAllSystems (
         system:

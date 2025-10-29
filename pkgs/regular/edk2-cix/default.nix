@@ -5,9 +5,8 @@
   fetchFromGitHub,
   acpica-tools,
   autoPatchelfHook,
-  fakeroot,
   libuuid,
-  python312,
+  python3,
   nix-update-script,
 }:
 
@@ -36,9 +35,8 @@ stdenv.mkDerivation (finalAttr: {
   nativeBuildInputs = [
     acpica-tools
     autoPatchelfHook
-    fakeroot
     libuuid
-    python312
+    python3
   ]
   ++ (lib.optional (
     stdenv.hostPlatform.system != "aarch64-linux"
@@ -108,8 +106,8 @@ stdenv.mkDerivation (finalAttr: {
     homepage = finalAttr.src.url;
     maintainers = with lib.maintainers; [ codgician ];
     platforms = [
-      "x86_64-linux"
       "aarch64-linux"
+      "x86_64-linux"
     ];
   };
 })
