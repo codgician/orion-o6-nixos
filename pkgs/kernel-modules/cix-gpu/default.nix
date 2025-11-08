@@ -9,7 +9,7 @@
 }:
 let
   kernelVersion = kernel.modDirVersion;
-  kernelDir = "${kernel.dev}/lib/modules/${kernelVersion}";
+  kernelDir = "${kernel.dev}/lib/modules/${kernelVersion}/build";
 in
 stdenv.mkDerivation (finalAttr: {
   pname = "cix-gpu";
@@ -22,6 +22,10 @@ stdenv.mkDerivation (finalAttr: {
     hash = "sha256-8QN5y3Vy/WF7cAWDNCDwe5obS2IzdI3FmXgRWAvWeZA=";
   };
 
+  patches = [
+    ./01-kbuild.patch
+  ];
+
   nativeBuildInputs = kernel.moduleBuildDependencies;
 
   postPatch = ''
@@ -31,6 +35,7 @@ stdenv.mkDerivation (finalAttr: {
   makeFlags = kernelModuleMakeFlags ++ [
     "KDIR=${kernelDir}"
     "KVER=${kernelVersion}"
+    "V=sc"
   ];
 
   installFlags = [ "INSTALL_MOD_PATH=$(out)" ];
@@ -43,7 +48,7 @@ stdenv.mkDerivation (finalAttr: {
   };
 
   meta = {
-    description = "Mellanox virtiofs kernel module";
+    description = "CIX GPU kernel dkms module";
     platforms = [ "aarch64-linux" ];
     maintainers = with lib.maintainers; [ codgician ];
   };

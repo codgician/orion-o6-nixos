@@ -1,0 +1,15 @@
+diff --git a/drivers/gpu/arm/midgard/Kbuild b/drivers/gpu/arm/midgard/Kbuild
+index bb5855f..2bd9b57 100644
+--- a/drivers/gpu/arm/midgard/Kbuild
++++ b/drivers/gpu/arm/midgard/Kbuild
+@@ -20,7 +20,10 @@
+ 
+ # make $(src) as absolute path if it is not already, by prefixing $(srctree)
+ # This is to prevent any build issue due to wrong path.
++# Only apply for in-tree builds (when KBUILD_EXTMOD is not set)
++ifeq ($(KBUILD_EXTMOD),)
+ src:=$(if $(patsubst /%,,$(src)),$(srctree)/$(src),$(src))
++endif
+ 
+ #
+ # Prevent misuse when Kernel configurations are not present by default
