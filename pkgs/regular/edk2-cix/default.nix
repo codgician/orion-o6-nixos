@@ -12,14 +12,14 @@
 
 stdenv.mkDerivation (finalAttr: {
   pname = "edk2-cix";
-  version = "0-unstable-2025-10-29";
+  version = "1.0.0-2";
 
   src = fetchFromGitHub {
     fetchSubmodules = true;
-    owner = "codgician";
+    owner = "radxa-pkg";
     repo = finalAttr.pname;
-    rev = "08b6ecc31489fddc7407eb20545bd5cb25a6d39f";
-    hash = "sha256-DymxG6BS6imoJbJjb+VvFMrDTtIGAhz6KPUbqqQEekY=";
+    rev = "64b63f49062bebf5c63d9a3b6ce044fa7449d25c";
+    hash = "sha256-iPUIRQk4pS/3WdRv+1/FFoa7bsCJygC4EE7AQonfcys=";
   };
 
   sourceRoot = "${finalAttr.src.name}/src";
@@ -94,12 +94,7 @@ stdenv.mkDerivation (finalAttr: {
     runHook postInstall
   '';
 
-  passthru.updateScript = nix-update-script {
-    extraArgs = [
-      "--version"
-      "branch=main"
-    ];
-  };
+  passthru.updateScript = nix-update-script { };
 
   meta = {
     description = "EDK2 for CIX platforms";
