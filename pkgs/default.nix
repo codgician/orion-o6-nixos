@@ -27,11 +27,8 @@ let
         inherit kernel kernelModuleMakeFlags;
       }
     ) ./kernel-modules;
-
-  # Flake-aware update script helper
-  flake-update-script = pkgs.callPackage ./flake-update-script.nix { };
 in
 {
-  inherit mkKernelModules flake-update-script;
+  inherit mkKernelModules;
   packages = regularPackages;
 }

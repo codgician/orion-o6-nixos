@@ -21,11 +21,20 @@
         "x86_64-linux"
       ];
       forAllSystems = f: lib.genAttrs systems (system: f system);
-      mkPkgs = system: import nixpkgs { inherit system; };
+      mkPkgs = system: import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      };
     in
     {
       # Library functions
-      lib = import ./lib { inherit (nixpkgs) lib; };
+      lib = forAllSystems (system: (import ./default.nix { pkgs = mkPkgs system; }).lib);
+
+      # Packages
+      legacyPackages = forAllSystems (system: import ./default.nix { pkgs = mkPkgs system; });
+      packages = forAllSystems (
+        system: nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v) self.legacyPackages.${system}
+      );
 
       # Overlays
       overlay = self.overlays.default;
@@ -47,9 +56,6 @@
               );
           };
         };
-
-      # Packages
-      packages = forAllSystems (system: (import ./pkgs { pkgs = mkPkgs system; }).packages);
 
       linuxPackages_6_6 = forAllSystems (
         system:
@@ -74,23 +80,29 @@
       # Text formatters
       formatter = forAllSystems (
         system:
-        with (mkPkgs system);
-        writeShellApplication {
+        let
+          pkgs = mkPkgs system;
+        in
+        pkgs.writeShellApplication {
           name = "formatter";
-          runtimeInputs = [
+          runtimeInputs = with pkgs; [
             treefmt
             nixfmt-rfc-style
             mdformat
             yamlfmt
           ];
-          text = lib.getExe treefmt;
+          text = lib.getExe pkgs.treefmt;
         }
       );
 
       devShells = forAllSystems (
-        system: with (mkPkgs system); {
-          default = mkShell {
-            buildInputs = [ jq ];
+        system:
+        let
+          pkgs = mkPkgs system;
+        in
+        {
+          default = pkgs.mkShell {
+            buildInputs = with pkgs; [ jq ];
           };
         }
       );

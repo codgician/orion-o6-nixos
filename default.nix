@@ -1,21 +1,19 @@
-# Compatibility layer for tools that expect a default.nix
-# This allows nix-update and similar tools to work with our flake-based repository
+# This file describes your repository contents.
+# It should return a set of nix derivations
+# and optionally the special attributes `lib`, `modules` and `overlays`.
+# It should NOT import <nixpkgs>. Instead, you should take pkgs as an argument.
+# Having pkgs default to <nixpkgs> is fine though, and it lets you use short
+# commands such as:
+#     nix-build -A mypackage
+
 {
-  system ? builtins.currentSystem,
-  overlays ? [ ],
+  pkgs ? import <nixpkgs> { allowUnfree = true; },
 }:
-
 let
-  lock = builtins.fromJSON (builtins.readFile ./flake.lock);
-  nixpkgs = fetchTarball {
-    url = "https://github.com/nixos/nixpkgs/archive/${lock.nodes.nixpkgs.locked.rev}.tar.gz";
-    sha256 = lock.nodes.nixpkgs.locked.narHash;
-  };
-
-  pkgs = import nixpkgs {
-    inherit system overlays;
-  };
+  pkgsResult = import ./pkgs { inherit pkgs; };
 in
-# Return the packages attrset directly so that tools can access them
-# e.g., (import ./. {}).edk2-cix
-(import ./pkgs { inherit pkgs; }).packages
+{
+  lib = import ./lib { inherit pkgs; }; # functions
+  inherit (pkgsResult) mkKernelModules;
+}
+// pkgsResult.packages # Merge packages at top level for compatibility
