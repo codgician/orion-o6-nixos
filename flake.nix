@@ -24,6 +24,9 @@
       mkPkgs = system: import nixpkgs { inherit system; };
     in
     {
+      # Library functions
+      lib = import ./lib { inherit (nixpkgs) lib; };
+
       # Overlays
       overlay = self.overlays.default;
       overlays.default =
