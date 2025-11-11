@@ -40,16 +40,16 @@ jobs:
             echo "flake.lock is not changed..."
             echo "trigger_build=0" >> $GITHUB_OUTPUT
           fi
-      - name: Trigger build
-        uses: actions/github-script@v8
-        if: steps.push.outputs.trigger_build == '1'
-        with:
-          script: |
-            github.rest.repos.createDispatchEvent({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              event_type: 'build',
-            });
+      # - name: Trigger build
+      #   uses: actions/github-script@v8
+      #   if: steps.push.outputs.trigger_build == '1'
+      #   with:
+      #     script: |
+      #       github.rest.repos.createDispatchEvent({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         event_type: 'build',
+      #       });
       - name: Find upgradable packages
         id: get_packages
         run: |
