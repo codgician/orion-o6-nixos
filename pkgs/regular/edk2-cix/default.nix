@@ -10,19 +10,19 @@
   nix-update-script,
 }:
 
-stdenv.mkDerivation (finalAttr: {
+stdenv.mkDerivation (finalAttrs: {
   pname = "edk2-cix";
   version = "1.0.0-2";
 
   src = fetchFromGitHub {
     fetchSubmodules = true;
     owner = "radxa-pkg";
-    repo = finalAttr.pname;
-    rev = "64b63f49062bebf5c63d9a3b6ce044fa7449d25c";
+    repo = finalAttrs.pname;
+    rev = finalAttrs.version;
     hash = "sha256-iPUIRQk4pS/3WdRv+1/FFoa7bsCJygC4EE7AQonfcys=";
   };
 
-  sourceRoot = "${finalAttr.src.name}/src";
+  sourceRoot = "${finalAttrs.src.name}/src";
 
   hardeningDisable = [
     "format"
@@ -98,7 +98,7 @@ stdenv.mkDerivation (finalAttr: {
 
   meta = {
     description = "EDK2 for CIX platforms";
-    homepage = finalAttr.src.url;
+    homepage = finalAttrs.src.url;
     maintainers = with lib.maintainers; [ codgician ];
     platforms = [
       "aarch64-linux"
