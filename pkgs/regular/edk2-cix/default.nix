@@ -22,8 +22,6 @@ stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-Dv8WvZJRThrD5eFp3D8jG1/Lg6dhauCuWnrcOpyj+Fk=";
   };
 
-  sourceRoot = "${finalAttrs.src.name}/src";
-
   hardeningDisable = [
     "format"
     "fortify"
@@ -51,9 +49,9 @@ stdenv.mkDerivation (finalAttrs: {
   postPatch = ''
     # Patch the pre-built binaries in edk2-non-osi before they're used
     # These are the tools used during the build process
-    autoPatchelf edk2-non-osi/Platform/CIX/Sky1/PackageTool/*/
+    autoPatchelf src/edk2-non-osi/Platform/CIX/Sky1/PackageTool/*/
 
-    substituteInPlace ./Makefile \
+    substituteInPlace ./src/Makefile \
       --replace-fail 'GCC5_AARCH64_PREFIX := aarch64-linux-gnu-' \
                      'GCC5_AARCH64_PREFIX := ${pkgsCross.aarch64-multiplatform.stdenv.cc.targetPrefix}' 
                     
@@ -62,8 +60,8 @@ stdenv.mkDerivation (finalAttrs: {
 
   preBuild = ''
     # Create directories that the Makefile expects to exist
-    mkdir -p Build/O6/RELEASE_GCC5/Firmwares
-    mkdir -p Build/O6N/RELEASE_GCC5/Firmwares
+    mkdir -p src/Build/O6/RELEASE_GCC5/Firmwares
+    mkdir -p src/Build/O6N/RELEASE_GCC5/Firmwares
   '';
 
   enableParallelBuilding = true;
@@ -79,16 +77,16 @@ stdenv.mkDerivation (finalAttrs: {
       mkdir -p "$install_dir"
 
       # Copy firmware binaries and build artifacts
-      cp -r Build/$build_target/RELEASE_GCC5/cix_flash*.bin "$install_dir"/
-      cp -r Build/$build_target/RELEASE_GCC5/BuildOptions "$install_dir"/
-      cp -r Build/$build_target/RELEASE_GCC5/AARCH64/VariableInfo.efi "$install_dir"/
-      cp -r Build/$build_target/RELEASE_GCC5/AARCH64/Shell.efi "$install_dir"/
+      cp -r src/Build/$build_target/RELEASE_GCC5/cix_flash*.bin "$install_dir"/
+      cp -r src/Build/$build_target/RELEASE_GCC5/BuildOptions "$install_dir"/
+      cp -r src/Build/$build_target/RELEASE_GCC5/AARCH64/VariableInfo.efi "$install_dir"/
+      cp -r src/Build/$build_target/RELEASE_GCC5/AARCH64/Shell.efi "$install_dir"/
 
       # Copy flash tools
-      cp -r edk2-non-osi/Platform/CIX/Sky1/FlashTool/* "$install_dir"/
+      cp -r src/edk2-non-osi/Platform/CIX/Sky1/FlashTool/* "$install_dir"/
 
       # Copy scripts
-      cp -r scripts/* "$install_dir"/
+      cp -r src/scripts/* "$install_dir"/
     done
 
     runHook postInstall
