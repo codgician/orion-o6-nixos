@@ -12,14 +12,14 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "edk2-cix";
-  version = "1.0.0-5";
+  version = "1.0.0-6";
 
   src = fetchFromGitHub {
     fetchSubmodules = true;
     owner = "radxa-pkg";
     repo = finalAttrs.pname;
     rev = finalAttrs.version;
-    hash = "sha256-7+MdoRjQHgQqLgdzo3VEH6sKvCeLkwEYlZ1Bg2cZXHk=";
+    hash = "sha256-KOoNqiUcnywNv6kPrCs3TgWY9PAglu4wXgEMzTIZnis=";
   };
 
   hardeningDisable = [
